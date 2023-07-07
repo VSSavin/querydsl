@@ -28,9 +28,9 @@ public class QEventH2Test {
         Connection conn = DriverManager.getConnection(url, "sa", "");
         Statement stmt = conn.createStatement();
 
-        ((JdbcDataSource)dataSource).setURL(url);
-        ((JdbcDataSource)dataSource).setUser("sa");
-        ((JdbcDataSource)dataSource).setPassword("");
+        ((JdbcDataSource) dataSource).setURL(url);
+        ((JdbcDataSource) dataSource).setUser("sa");
+        ((JdbcDataSource) dataSource).setPassword("");
 
         stmt.execute("drop table EVENT if exists");
         stmt.execute("create table EVENT(" +
