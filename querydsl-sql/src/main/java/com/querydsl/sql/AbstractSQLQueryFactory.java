@@ -20,10 +20,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.sql.dml.SQLDeleteClause;
-import com.querydsl.sql.dml.SQLInsertClause;
-import com.querydsl.sql.dml.SQLMergeClause;
-import com.querydsl.sql.dml.SQLUpdateClause;
+import com.querydsl.sql.dml.*;
 
 /**
  * {@code AbstractSQLQueryFactory} is the base class for {@link SQLCommonQueryFactory} implementations
@@ -39,14 +36,17 @@ public abstract class AbstractSQLQueryFactory<Q extends SQLCommonQuery<?>> imple
 
     protected final Supplier<Connection> connection;
 
+    protected final SQLClauseFactory sqlClauseFactory;
+
     public AbstractSQLQueryFactory(Configuration configuration, Supplier<Connection> connProvider) {
         this.configuration = configuration;
         this.connection = connProvider;
+        this.sqlClauseFactory = new SQLClauseFactory(connProvider, configuration);
     }
 
     @Override
     public final SQLDeleteClause delete(RelationalPath<?> path) {
-        return new SQLDeleteClause(connection, configuration, path);
+        return sqlClauseFactory.getSQLDeleteClause(path);
     }
 
     @SuppressWarnings("unchecked")
@@ -69,17 +69,17 @@ public abstract class AbstractSQLQueryFactory<Q extends SQLCommonQuery<?>> imple
 
     @Override
     public final SQLInsertClause insert(RelationalPath<?> path) {
-        return new SQLInsertClause(connection, configuration, path);
+        return sqlClauseFactory.getInsertClause(path);
     }
 
     @Override
     public final SQLMergeClause merge(RelationalPath<?> path) {
-        return new SQLMergeClause(connection, configuration, path);
+        return sqlClauseFactory.getSQLMergeClause(path);
     }
 
     @Override
     public final SQLUpdateClause update(RelationalPath<?> path) {
-        return new SQLUpdateClause(connection, configuration, path);
+        return sqlClauseFactory.getUpdateClause(path);
     }
 
     public final Configuration getConfiguration() {
